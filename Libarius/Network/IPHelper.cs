@@ -54,10 +54,12 @@ namespace Libarius.Network
         {
             get
             {
-                return NetworkInterface.GetAllNetworkInterfaces()
-                .Where(i => i.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
-                .FirstOrDefault().GetIPProperties().GatewayAddresses
-                .FirstOrDefault().Address;
+                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
+                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
+                    let gw = i.GetIPProperties().GatewayAddresses.FirstOrDefault()
+                    select gw.Address;
+
+                return result.FirstOrDefault();
             }
         }
     }
