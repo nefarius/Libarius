@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Logging\SimpleLog.cs" />
     <Compile Include="Network\IPHelper.cs" />
     <Compile Include="Network\UPnP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
