@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Libarius.Network;
+using Libarius.System;
 
 namespace LibTests
 {
@@ -15,6 +16,8 @@ namespace LibTests
 
             UPnP.Discover();
             Console.WriteLine("Ext. IP: {0}", UPnP.ExternalIp);
+
+            Console.WriteLine("App Name: {0}", SystemHelper.ApplicationName);
 
             Console.ReadKey();
         }
