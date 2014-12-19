@@ -165,7 +165,7 @@ namespace Libarius.Network
         /// <summary>
         /// Returns the WAN IP address the UPnP device discovered. This doesn't have to be the public IP address.
         /// </summary>
-        public static IPAddress ExternalIP
+        public static IPAddress ExternalIp
         {
             get
             {
