@@ -7,7 +7,7 @@ using System.Security;
 
 namespace Libarius.System
 {
-    static class SystemHelper
+    public static class SystemHelper
     {
         #region Windows API Flags
         [Flags]
