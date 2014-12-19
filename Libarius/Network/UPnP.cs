@@ -11,9 +11,9 @@ using System.Xml;
  * Modified by:     Benjamin "Nefarius" Höglinger <nefarius@dhmx.at>
  *                  http://nefarius.at/
  * */
-namespace Libarius.Network.UPnP
+namespace Libarius.Network
 {
-    public class NAT
+    public class UPnP
     {
         static TimeSpan _timeout = new TimeSpan(0, 0, 0, 3);
         public static TimeSpan TimeOut
