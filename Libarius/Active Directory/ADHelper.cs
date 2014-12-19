@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
+using System.Linq;
 
 namespace Libarius.Active_Directory
 {
@@ -13,16 +14,16 @@ namespace Libarius.Active_Directory
         /// <returns>A list of groups on success, otherwise an empty list</returns>
         public static List<GroupPrincipal> GetGroups(string userName)
         {
-            var result = new List<GroupPrincipal>();
+            IEnumerable<GroupPrincipal> result = null;
             // establish domain context
-            PrincipalContext yourDomain = null;
+            PrincipalContext yourDomain;
 
             try
             {
                 // establish domain context
                 yourDomain = new PrincipalContext(ContextType.Domain);
             }
-            catch (PrincipalServerDownException) { return result; }
+            catch (PrincipalServerDownException) { return null; }
 
             // find your user
             var user = UserPrincipal.FindByIdentity(yourDomain, userName);
@@ -30,20 +31,12 @@ namespace Libarius.Active_Directory
             // if found - grab its groups
             if (user != null)
             {
-                PrincipalSearchResult<Principal> groups = user.GetAuthorizationGroups();
-
-                // iterate over all groups
-                foreach (Principal p in groups)
-                {
-                    // make sure to add only group principals
-                    if (p is GroupPrincipal)
-                    {
-                        result.Add((GroupPrincipal)p);
-                    }
-                }
+                result = from p in user.GetAuthorizationGroups()
+                    where p is GroupPrincipal
+                    select p as GroupPrincipal;
             }
 
-            return result;
+            return (result != null) ? result.ToList() : null;
         }
 
         /// <summary>
