@@ -13,6 +13,9 @@ namespace LibTests
             Console.WriteLine("Private: {0}\nGateway: {1}\nPublic:  {2}", 
                 IpHelper.PrivateIpAddress, IpHelper.DefaultGateway, IpHelper.PublicIpAddress);
 
+            UPnP.Discover();
+            Console.WriteLine("Ext. IP: {0}", UPnP.ExternalIp);
+
             Console.ReadKey();
         }
     }
