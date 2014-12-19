@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="Active Directory\ADHelper.cs" />
     <Compile Include="Cryptography\AesHelper.cs" />
+    <Compile Include="Cryptography\StringCipher.cs" />
     <Compile Include="Logging\SimpleLog.cs" />
     <Compile Include="Network\IPHelper.cs" />
     <Compile Include="Network\UPnP.cs" />
