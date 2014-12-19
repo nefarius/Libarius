@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
 
@@ -7,6 +9,7 @@ namespace Libarius.System
 {
     static class SystemHelper
     {
+        #region Windows API Flags
         [Flags]
         public enum ExitWindows : uint
         {
@@ -67,6 +70,7 @@ namespace Libarius.System
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool ExitWindowsEx(ExitWindows uFlags, ShutdownReason dwReason);
+        #endregion
 
         public static void Logoff()
         {
@@ -81,6 +85,37 @@ namespace Libarius.System
             }
 
             return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
+        }
+
+        /// <summary>
+        /// Gets the current assemblys name without path and extension.
+        /// </summary>
+        public static string ApplicationName
+        {
+            get
+            {
+                return Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
+            }
+        }
+
+        /// <summary>
+        /// Gets the current users local application data path.
+        /// </summary>
+        public static string LocalAppDataPath
+        {
+            get
+            {
+                string path = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    ApplicationName);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
         }
     }
 
