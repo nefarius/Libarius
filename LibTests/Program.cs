@@ -10,7 +10,8 @@ namespace LibTests
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(IpHelper.DefaultGateway);
+            Console.WriteLine("Private: {0}\nGateway: {1}\nPublic:  {2}", 
+                IpHelper.PrivateIpAddress, IpHelper.DefaultGateway, IpHelper.PublicIpAddress);
 
             Console.ReadKey();
         }
