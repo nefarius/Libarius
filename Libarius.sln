@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libarius", "Libarius\Libarius.csproj", "{9398C5A9-DE68-498E-B124-3390FDE989A5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LibTests", "LibTests\LibTests.csproj", "{287BAE03-9452-436D-9607-3B65DCB89063}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{9398C5A9-DE68-498E-B124-3390FDE989A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9398C5A9-DE68-498E-B124-3390FDE989A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9398C5A9-DE68-498E-B124-3390FDE989A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{287BAE03-9452-436D-9607-3B65DCB89063}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{287BAE03-9452-436D-9607-3B65DCB89063}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{287BAE03-9452-436D-9607-3B65DCB89063}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{287BAE03-9452-436D-9607-3B65DCB89063}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -56,7 +56,9 @@ namespace Libarius.Network
             {
                 var result = from i in NetworkInterface.GetAllNetworkInterfaces()
                     where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
-                    let gw = i.GetIPProperties().GatewayAddresses.FirstOrDefault()
+                    let ifprops = i.GetIPProperties()
+                    where ifprops.GatewayAddresses.Count > 0
+                    let gw = ifprops.GatewayAddresses.FirstOrDefault()
                     select gw.Address;
 
                 return result.FirstOrDefault();
