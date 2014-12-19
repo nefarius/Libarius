@@ -8,19 +8,19 @@ namespace Libarius.System
 {
     public class LimitInstance
     {
-        private string instanceName = string.Empty;
-        private Mutex mutex;
+        private readonly string _instanceName;
+        private Mutex _mutex;
 
         public LimitInstance(string instanceName)
         {
-            this.instanceName = instanceName;
+            this._instanceName = instanceName;
         }
 
         public void Dispose()
         {
-            if (mutex != null)
+            if (_mutex != null)
             {
-                mutex.Close();
+                _mutex.Close();
             }
         }
 
@@ -30,12 +30,12 @@ namespace Libarius.System
             {
                 try
                 {
-                    mutex = Mutex.OpenExisting(instanceName);
+                    _mutex = Mutex.OpenExisting(_instanceName);
                     return false;
                 }
                 catch (WaitHandleCannotBeOpenedException)
                 {
-                    mutex = new Mutex(true, instanceName);
+                    _mutex = new Mutex(true, _instanceName);
                     return true;
                 }
             }

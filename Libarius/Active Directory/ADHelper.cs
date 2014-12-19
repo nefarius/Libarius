@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.DirectoryServices.AccountManagement;
 
-namespace Libarius.AD
+namespace Libarius.Active_Directory
 {
-    public static class ADHelper
+    public static class AdHelper
     {
         /// <summary>
         /// Returns a list of groups the supplied user is member of.
@@ -13,7 +13,7 @@ namespace Libarius.AD
         /// <returns>A list of groups on success, otherwise an empty list</returns>
         public static List<GroupPrincipal> GetGroups(string userName)
         {
-            List<GroupPrincipal> result = new List<GroupPrincipal>();
+            var result = new List<GroupPrincipal>();
             // establish domain context
             PrincipalContext yourDomain = null;
 
@@ -25,7 +25,7 @@ namespace Libarius.AD
             catch (PrincipalServerDownException) { return result; }
 
             // find your user
-            UserPrincipal user = UserPrincipal.FindByIdentity(yourDomain, userName);
+            var user = UserPrincipal.FindByIdentity(yourDomain, userName);
 
             // if found - grab its groups
             if (user != null)
@@ -85,7 +85,7 @@ namespace Libarius.AD
         /// <returns></returns>
         public static bool IsUserInGroup(string userName, Guid gUID)
         {
-            return ADHelper.GetGroups(userName).Find(group => group.Guid == gUID) == null ? false : true;
+            return AdHelper.GetGroups(userName).Find(group => group.Guid == gUID) == null ? false : true;
         }
     }
 }

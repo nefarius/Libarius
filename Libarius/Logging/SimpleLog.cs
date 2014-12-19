@@ -7,16 +7,16 @@ namespace Libarius.Logging
     public class SimpleLog
     {
         private FileStream logFile;
-        private TextWriterTraceListener logFileListener;
-        private TextWriterTraceListener consoleListener;
+        private TextWriterTraceListener _logFileListener;
+        private TextWriterTraceListener _consoleListener;
 
         public void Initialize(string fileName)
         {
             logFile = new FileStream(fileName, FileMode.OpenOrCreate);
-            logFileListener = new TextWriterTraceListener(logFile);
-            consoleListener = new TextWriterTraceListener(Console.Out);
-            Trace.Listeners.Add(logFileListener);
-            Trace.Listeners.Add(consoleListener);
+            _logFileListener = new TextWriterTraceListener(logFile);
+            _consoleListener = new TextWriterTraceListener(Console.Out);
+            Trace.Listeners.Add(_logFileListener);
+            Trace.Listeners.Add(_consoleListener);
         }
 
         private SimpleLog()
@@ -28,9 +28,9 @@ namespace Libarius.Logging
 
         public void WriteLine(string line)
         {
-            DateTime now = DateTime.Now;
-            string date = now.ToShortDateString();
-            string time = now.ToLongTimeString();
+            var now = DateTime.Now;
+            var date = now.ToShortDateString();
+            var time = now.ToLongTimeString();
 
             Trace.WriteLine(string.Format("{0}, {1} - {2}", date, time, line));
             Trace.Flush();
