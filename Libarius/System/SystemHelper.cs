@@ -83,8 +83,10 @@ namespace Libarius.System
             {
                 return false;
             }
-
-            return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
+            else
+            {
+                return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
+            }
         }
 
         /// <summary>
@@ -105,7 +107,7 @@ namespace Libarius.System
         {
             get
             {
-                string path = Path.Combine(
+                var path = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                     ApplicationName);
 

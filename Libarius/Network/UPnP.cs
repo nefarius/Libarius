@@ -130,16 +130,16 @@ namespace Libarius.Network.UPnP
         /// </summary>
         /// <param name="externalPort">Number of external (e.g. WAN) port to forward.</param>
         /// <param name="localPort">Number of local port to get forwarded to.</param>
-        /// <param name="localIP">Desired target hosts local IP address.</param>
+        /// <param name="localIp">Desired target hosts local IP address.</param>
         /// <param name="protocol">Desired protocol.</param>
         /// <param name="description">Description the device should name this new forwarding rule.</param>
-        public static void ForwardPort(int externalPort, int localPort, IPAddress localIP, ProtocolType protocol, string description)
+        public static void ForwardPort(int externalPort, int localPort, IPAddress localIp, ProtocolType protocol, string description)
         {
             if (string.IsNullOrEmpty(_serviceUrl))
                 throw new Exception("No UPnP service available or Discover() has not been called");
             XmlDocument xdoc = SOAPRequest(_serviceUrl, "<u:AddPortMapping xmlns:u=\"urn:schemas-upnp-org:service:WANIPConnection:1\">" +
-                "<NewRemoteHost></NewRemoteHost><NewExternalPort>" + externalPort.ToString() + "</NewExternalPort><NewProtocol>" + protocol.ToString().ToUpper() + "</NewProtocol>" +
-                "<NewInternalPort>" + localPort.ToString() + "</NewInternalPort><NewInternalClient>" + localIP.ToString() +
+                "<NewRemoteHost></NewRemoteHost><NewExternalPort>" + externalPort + "</NewExternalPort><NewProtocol>" + protocol.ToString().ToUpper() + "</NewProtocol>" +
+                "<NewInternalPort>" + localPort + "</NewInternalPort><NewInternalClient>" + localIp +
                 "</NewInternalClient><NewEnabled>1</NewEnabled><NewPortMappingDescription>" + description +
             "</NewPortMappingDescription><NewLeaseDuration>0</NewLeaseDuration></u:AddPortMapping>", "AddPortMapping");
         }
