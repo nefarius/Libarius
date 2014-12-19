@@ -83,10 +83,8 @@ namespace Libarius.System
             {
                 return false;
             }
-            else
-            {
-                return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
-            }
+
+            return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
         }
 
         /// <summary>
