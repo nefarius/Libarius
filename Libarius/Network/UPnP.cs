@@ -110,7 +110,7 @@ namespace Libarius.Network
         /// <param name="description">Description the device should name this new forwarding rule.</param>
         public static void ForwardPort(int port, ProtocolType protocol, string description)
         {
-            ForwardPort(port, port, IPHelper.PrivateIpAddress, protocol, description);
+            ForwardPort(port, port, IpHelper.PrivateIpAddress, protocol, description);
         }
 
         /// <summary>
@@ -122,7 +122,7 @@ namespace Libarius.Network
         /// <param name="description">Description the device should name this new forwarding rule.</param>
         public static void ForwardPort(int externalPort, int localPort, ProtocolType protocol, string description)
         {
-            ForwardPort(externalPort, localPort, IPHelper.PrivateIpAddress, protocol, description);
+            ForwardPort(externalPort, localPort, IpHelper.PrivateIpAddress, protocol, description);
         }
 
         /// <summary>

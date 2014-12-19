@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 
 namespace Libarius.Network
 {
-    public static class IPHelper
+    public static class IpHelper
     {
         /// <summary>
         /// Returns the private IP address from the first adapter found on the client machine.
@@ -35,7 +35,7 @@ namespace Libarius.Network
                 request.UserAgent = "curl"; // this simulate curl Linux command
                 request.Method = "GET";
 
-                using (WebResponse response = request.GetResponse())
+                using (var response = request.GetResponse())
                 {
                     using (var reader = new StreamReader(response.GetResponseStream()))
                     {

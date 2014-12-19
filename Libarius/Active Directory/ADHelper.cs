@@ -49,43 +49,43 @@ namespace Libarius.Active_Directory
         /// <summary>
         /// Checks if the current user is member of the supplied group.
         /// </summary>
-        /// <param name="gUID">The groups unique identifier.</param>
+        /// <param name="gUid">The groups unique identifier.</param>
         /// <returns>True if the user is a mamber, false otherwise.</returns>
-        public static bool IsUserInGroup(Guid gUID)
+        public static bool IsUserInGroup(Guid gUid)
         {
-            return IsUserInGroup(Environment.UserName, gUID);
+            return IsUserInGroup(Environment.UserName, gUid);
         }
 
         /// <summary>
         /// Checks if the current user is member of the supplied group.
         /// </summary>
-        /// <param name="gUID">The groups unique identifier.</param>
+        /// <param name="gUid">The groups unique identifier.</param>
         /// <returns>True if the user is a mamber, false otherwise.</returns>
-        public static bool IsUserInGroup(string gUID)
+        public static bool IsUserInGroup(string gUid)
         {
-            return IsUserInGroup(Environment.UserName, gUID);
+            return IsUserInGroup(Environment.UserName, gUid);
         }
 
         /// <summary>
         /// Checks if the provided user is member of the supplied group.
         /// </summary>
         /// <param name="userName">The logon name of the user.</param>
-        /// <param name="gUID">The groups unique identifier.</param>
+        /// <param name="gUid">The groups unique identifier.</param>
         /// <returns></returns>
-        public static bool IsUserInGroup(string userName, string gUID)
+        public static bool IsUserInGroup(string userName, string gUid)
         {
-            return IsUserInGroup(userName, Guid.Parse(gUID));
+            return IsUserInGroup(userName, Guid.Parse(gUid));
         }
 
         /// <summary>
         /// Checks if the provided user is member of the supplied group.
         /// </summary>
         /// <param name="userName">The logon name of the user.</param>
-        /// <param name="gUID">The groups unique identifier.</param>
+        /// <param name="gUid">The groups unique identifier.</param>
         /// <returns></returns>
-        public static bool IsUserInGroup(string userName, Guid gUID)
+        public static bool IsUserInGroup(string userName, Guid gUid)
         {
-            return AdHelper.GetGroups(userName).Find(group => group.Guid == gUID) == null ? false : true;
+            return (GetGroups(userName).Find(group => group.Guid == gUid) == null);
         }
     }
 }
