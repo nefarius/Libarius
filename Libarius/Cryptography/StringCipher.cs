@@ -6,6 +6,10 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * http://stackoverflow.com/questions/10168240/encrypting-decrypting-a-string-in-c-sharp
+ */
+
 namespace Libarius.Cryptography
 {
     public static class StringCipher
