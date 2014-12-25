@@ -14,8 +14,6 @@
 
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Libarius.Compression.QuickLZ
 {
@@ -24,13 +22,10 @@ namespace Libarius.Compression.QuickLZ
         public const int QLZ_VERSION_MAJOR = 1;
         public const int QLZ_VERSION_MINOR = 5;
         public const int QLZ_VERSION_REVISION = 0;
-
         // Streaming mode not supported
         public const int QLZ_STREAMING_BUFFER = 0;
-
         // Bounds checking not supported  Use try...catch instead
         public const int QLZ_MEMORY_SAFE = 0;
-
         // Decrease QLZ_POINTERS_3 to increase level 3 compression speed. Do not edit any other values!
         private const int HASH_VALUES = 4096;
         private const int MINOFFSET = 2;
@@ -50,16 +45,14 @@ namespace Libarius.Compression.QuickLZ
         {
             if (headerLen(source) == 9)
                 return source[5] | (source[6] << 8) | (source[7] << 16) | (source[8] << 24);
-            else
-                return source[2];
+            return source[2];
         }
 
         public static int sizeCompressed(byte[] source)
         {
             if (headerLen(source) == 9)
                 return source[1] | (source[2] << 8) | (source[3] << 16) | (source[4] << 24);
-            else
-                return source[1];
+            return source[1];
         }
 
         private static void write_header(byte[] dst, int level, bool compressible, int size_compressed,
@@ -75,18 +68,18 @@ namespace Libarius.Compression.QuickLZ
 
         public static byte[] compress(byte[] source, int level)
         {
-            int src = 0;
-            int dst = DEFAULT_HEADERLEN + CWORD_LEN;
-            uint cword_val = 0x80000000;
-            int cword_ptr = DEFAULT_HEADERLEN;
-            byte[] destination = new byte[source.Length + 400];
+            var src = 0;
+            var dst = DEFAULT_HEADERLEN + CWORD_LEN;
+            var cword_val = 0x80000000;
+            var cword_ptr = DEFAULT_HEADERLEN;
+            var destination = new byte[source.Length + 400];
             int[,] hashtable;
-            int[] cachetable = new int[HASH_VALUES];
-            byte[] hash_counter = new byte[HASH_VALUES];
+            var cachetable = new int[HASH_VALUES];
+            var hash_counter = new byte[HASH_VALUES];
             byte[] d2;
-            int fetch = 0;
-            int last_matchstart = (source.Length - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1);
-            int lits = 0;
+            var fetch = 0;
+            var last_matchstart = (source.Length - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1);
+            var lits = 0;
 
             if (level != 1 && level != 3)
                 throw new ArgumentException("C# version only supports level 1 and 3");
@@ -122,9 +115,9 @@ namespace Libarius.Compression.QuickLZ
 
                 if (level == 1)
                 {
-                    int hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
-                    int o = hashtable[hash, 0];
-                    int cache = cachetable[hash] ^ fetch;
+                    var hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
+                    var o = hashtable[hash, 0];
+                    var cache = cachetable[hash] ^ fetch;
                     cachetable[hash] = fetch;
                     hashtable[hash, 0] = src;
 
@@ -137,7 +130,7 @@ namespace Libarius.Compression.QuickLZ
                         cword_val = ((cword_val >> 1) | 0x80000000);
                         if (source[o + 3] != source[src + 3])
                         {
-                            int f = 3 - 2 | (hash << 4);
+                            var f = 3 - 2 | (hash << 4);
                             destination[dst + 0] = (byte) (f >> 0*8);
                             destination[dst + 1] = (byte) (f >> 1*8);
                             src += 3;
@@ -145,8 +138,8 @@ namespace Libarius.Compression.QuickLZ
                         }
                         else
                         {
-                            int old_src = src;
-                            int remaining = ((source.Length - UNCOMPRESSED_END - src + 1 - 1) > 255
+                            var old_src = src;
+                            var remaining = ((source.Length - UNCOMPRESSED_END - src + 1 - 1) > 255
                                 ? 255
                                 : (source.Length - UNCOMPRESSED_END - src + 1 - 1));
 
@@ -162,12 +155,12 @@ namespace Libarius.Compression.QuickLZ
                                 }
                             }
 
-                            int matchlen = src - old_src;
+                            var matchlen = src - old_src;
 
                             hash <<= 4;
                             if (matchlen < 18)
                             {
-                                int f = (hash | (matchlen - 2));
+                                var f = (hash | (matchlen - 2));
                                 destination[dst + 0] = (byte) (f >> 0*8);
                                 destination[dst + 1] = (byte) (f >> 1*8);
                                 dst += 2;
@@ -191,7 +184,6 @@ namespace Libarius.Compression.QuickLZ
                         dst++;
                         fetch = ((fetch >> 8) & 0xffff) | (source[src + 2] << 16);
                     }
-
                 }
                 else
                 {
@@ -200,10 +192,10 @@ namespace Libarius.Compression.QuickLZ
                     int o, offset2;
                     int matchlen, k, m, best_k = 0;
                     byte c;
-                    int remaining = ((source.Length - UNCOMPRESSED_END - src + 1 - 1) > 255
+                    var remaining = ((source.Length - UNCOMPRESSED_END - src + 1 - 1) > 255
                         ? 255
                         : (source.Length - UNCOMPRESSED_END - src + 1 - 1));
-                    int hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
+                    var hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
 
                     c = hash_counter[hash];
                     matchlen = 0;
@@ -232,9 +224,9 @@ namespace Libarius.Compression.QuickLZ
 
                     if (matchlen >= 3 && src - o < 131071)
                     {
-                        int offset = src - o;
+                        var offset = src - o;
 
-                        for (int u = 1; u < matchlen; u++)
+                        for (var u = 1; u < matchlen; u++)
                         {
                             fetch = source[src + u] | (source[src + u + 1] << 8) | (source[src + u + 2] << 16);
                             hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
@@ -307,25 +299,24 @@ namespace Libarius.Compression.QuickLZ
             return d2;
         }
 
-
         private static void fast_write(byte[] a, int i, int value, int numbytes)
         {
-            for (int j = 0; j < numbytes; j++)
+            for (var j = 0; j < numbytes; j++)
                 a[i + j] = (byte) (value >> (j*8));
         }
 
         public static byte[] decompress(byte[] source)
         {
             int level;
-            int size = sizeDecompressed(source);
-            int src = headerLen(source);
-            int dst = 0;
+            var size = sizeDecompressed(source);
+            var src = headerLen(source);
+            var dst = 0;
             uint cword_val = 1;
-            byte[] destination = new byte[size];
-            int[] hashtable = new int[4096];
-            byte[] hash_counter = new byte[4096];
-            int last_matchstart = size - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1;
-            int last_hashed = -1;
+            var destination = new byte[size];
+            var hashtable = new int[4096];
+            var hash_counter = new byte[4096];
+            var last_matchstart = size - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1;
+            var last_hashed = -1;
             int hash;
             uint fetch = 0;
 
@@ -336,7 +327,7 @@ namespace Libarius.Compression.QuickLZ
 
             if ((source[0] & 1) != 1)
             {
-                byte[] d2 = new byte[size];
+                var d2 = new byte[size];
                 Array.Copy(source, headerLen(source), d2, 0, size);
                 return d2;
             }
@@ -424,7 +415,7 @@ namespace Libarius.Compression.QuickLZ
                     destination[dst + 1] = destination[offset2 + 1];
                     destination[dst + 2] = destination[offset2 + 2];
 
-                    for (int i = 3; i < matchlen; i += 1)
+                    for (var i = 3; i < matchlen; i += 1)
                     {
                         destination[dst + i] = destination[offset2 + i];
                     }
@@ -470,7 +461,7 @@ namespace Libarius.Compression.QuickLZ
                             while (last_hashed < dst - 3)
                             {
                                 last_hashed++;
-                                int fetch2 = destination[last_hashed] | (destination[last_hashed + 1] << 8) |
+                                var fetch2 = destination[last_hashed] | (destination[last_hashed + 1] << 8) |
                                              (destination[last_hashed + 2] << 16);
                                 hash = ((fetch2 >> 12) ^ fetch2) & (HASH_VALUES - 1);
                                 hashtable[hash] = last_hashed;

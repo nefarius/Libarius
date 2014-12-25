@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Security.Cryptography;
-using System.Text;
 
 /*
  *  http://www.codeproject.com/Articles/769741/Csharp-AES-bits-Encryption-Library-with-Salt
@@ -19,7 +15,7 @@ namespace Libarius.Cryptography
 
             // Set your salt here, change it to meet your flavor:
             // The salt bytes must be at least 8 bytes.
-            var saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            var saltBytes = new byte[] {1, 2, 3, 4, 5, 6, 7, 8};
 
             using (var ms = new MemoryStream())
             {
@@ -29,8 +25,8 @@ namespace Libarius.Cryptography
                     aes.BlockSize = 128;
 
                     var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
-                    aes.Key = key.GetBytes(aes.KeySize / 8);
-                    aes.IV = key.GetBytes(aes.BlockSize / 8);
+                    aes.Key = key.GetBytes(aes.KeySize/8);
+                    aes.IV = key.GetBytes(aes.BlockSize/8);
 
                     aes.Mode = CipherMode.CBC;
 
@@ -52,7 +48,7 @@ namespace Libarius.Cryptography
 
             // Set your salt here, change it to meet your flavor:
             // The salt bytes must be at least 8 bytes.
-            var saltBytes = new byte[] { 1, 2, 3, 4, 5, 6, 7, 8 };
+            var saltBytes = new byte[] {1, 2, 3, 4, 5, 6, 7, 8};
 
             using (var ms = new MemoryStream())
             {
@@ -62,8 +58,8 @@ namespace Libarius.Cryptography
                     aes.BlockSize = 128;
 
                     var key = new Rfc2898DeriveBytes(passwordBytes, saltBytes, 1000);
-                    aes.Key = key.GetBytes(aes.KeySize / 8);
-                    aes.IV = key.GetBytes(aes.BlockSize / 8);
+                    aes.Key = key.GetBytes(aes.KeySize/8);
+                    aes.IV = key.GetBytes(aes.BlockSize/8);
 
                     aes.Mode = CipherMode.CBC;
 

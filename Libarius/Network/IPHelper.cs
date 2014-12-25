@@ -11,26 +11,29 @@ namespace Libarius.Network
     public static class IpHelper
     {
         /// <summary>
-        /// Returns the private IP address from the first adapter found on the client machine.
+        ///     Returns the private IP address from the first adapter found on the client machine.
         /// </summary>
         public static IPAddress PrivateIpAddress
         {
             get
             {
-                return Dns.GetHostEntry(Environment.MachineName).AddressList.Where(i => i.AddressFamily == AddressFamily.InterNetwork).FirstOrDefault();
+                return
+                    Dns.GetHostEntry(Environment.MachineName)
+                        .AddressList.Where(i => i.AddressFamily == AddressFamily.InterNetwork)
+                        .FirstOrDefault();
             }
         }
 
         /// <summary>
-        /// Queries checkip.dyndns.org to retrieve the public visible IP address.
+        ///     Queries checkip.dyndns.org to retrieve the public visible IP address.
         /// </summary>
         public static IPAddress PublicIpAddress
         {
             get
             {
                 string content;
-                var request = (HttpWebRequest)WebRequest.Create("http://checkip.dyndns.org/");
-                Regex ip = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
+                var request = (HttpWebRequest) WebRequest.Create("http://checkip.dyndns.org/");
+                var ip = new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b");
 
                 request.UserAgent = "curl"; // this simulate curl Linux command
                 request.Method = "GET";
@@ -48,7 +51,7 @@ namespace Libarius.Network
         }
 
         /// <summary>
-        /// Returns the default gateway.
+        ///     Returns the default gateway.
         /// </summary>
         public static IPAddress DefaultGateway
         {

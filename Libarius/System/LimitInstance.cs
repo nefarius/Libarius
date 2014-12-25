@@ -1,27 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Libarius.System
 {
-    public class LimitInstance
+    public sealed class LimitInstance
     {
         private readonly string _instanceName;
         private Mutex _mutex;
 
         public LimitInstance(string instanceName)
         {
-            this._instanceName = instanceName;
-        }
-
-        public void Dispose()
-        {
-            if (_mutex != null)
-            {
-                _mutex.Close();
-            }
+            _instanceName = instanceName;
         }
 
         public bool IsOnlyInstance
@@ -38,6 +26,14 @@ namespace Libarius.System
                     _mutex = new Mutex(true, _instanceName);
                     return true;
                 }
+            }
+        }
+
+        public void Dispose()
+        {
+            if (_mutex != null)
+            {
+                _mutex.Close();
             }
         }
     }

@@ -8,7 +8,7 @@ namespace Libarius.Active_Directory
     public static class AdHelper
     {
         /// <summary>
-        /// Returns a list of groups the supplied user is member of.
+        ///     Returns a list of groups the supplied user is member of.
         /// </summary>
         /// <param name="userName">Username</param>
         /// <returns>A list of groups on success, otherwise an empty list</returns>
@@ -23,7 +23,10 @@ namespace Libarius.Active_Directory
                 // establish domain context
                 yourDomain = new PrincipalContext(ContextType.Domain);
             }
-            catch (PrincipalServerDownException) { return null; }
+            catch (PrincipalServerDownException)
+            {
+                return null;
+            }
 
             // find your user
             var user = UserPrincipal.FindByIdentity(yourDomain, userName);
@@ -40,7 +43,7 @@ namespace Libarius.Active_Directory
         }
 
         /// <summary>
-        /// Checks if the current user is member of the supplied group.
+        ///     Checks if the current user is member of the supplied group.
         /// </summary>
         /// <param name="gUid">The groups unique identifier.</param>
         /// <returns>True if the user is a mamber, false otherwise.</returns>
@@ -50,7 +53,7 @@ namespace Libarius.Active_Directory
         }
 
         /// <summary>
-        /// Checks if the current user is member of the supplied group.
+        ///     Checks if the current user is member of the supplied group.
         /// </summary>
         /// <param name="gUid">The groups unique identifier.</param>
         /// <returns>True if the user is a mamber, false otherwise.</returns>
@@ -60,7 +63,7 @@ namespace Libarius.Active_Directory
         }
 
         /// <summary>
-        /// Checks if the provided user is member of the supplied group.
+        ///     Checks if the provided user is member of the supplied group.
         /// </summary>
         /// <param name="userName">The logon name of the user.</param>
         /// <param name="gUid">The groups unique identifier.</param>
@@ -71,7 +74,7 @@ namespace Libarius.Active_Directory
         }
 
         /// <summary>
-        /// Checks if the provided user is member of the supplied group.
+        ///     Checks if the provided user is member of the supplied group.
         /// </summary>
         /// <param name="userName">The logon name of the user.</param>
         /// <param name="gUid">The groups unique identifier.</param>

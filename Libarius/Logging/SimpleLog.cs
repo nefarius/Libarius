@@ -4,16 +4,16 @@ using System.IO;
 
 namespace Libarius.Logging
 {
-    public class SimpleLog
+    public sealed class SimpleLog
     {
-        private FileStream logFile;
+        private FileStream _logFile;
         private TextWriterTraceListener _logFileListener;
         private TextWriterTraceListener _consoleListener;
 
         public void Initialize(string fileName)
         {
-            logFile = new FileStream(fileName, FileMode.OpenOrCreate);
-            _logFileListener = new TextWriterTraceListener(logFile);
+            _logFile = new FileStream(fileName, FileMode.OpenOrCreate);
+            _logFileListener = new TextWriterTraceListener(_logFile);
             _consoleListener = new TextWriterTraceListener(Console.Out);
             Trace.Listeners.Add(_logFileListener);
             Trace.Listeners.Add(_consoleListener);

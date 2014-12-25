@@ -9,7 +9,51 @@ namespace Libarius.System
 {
     public static class SystemHelper
     {
+        /// <summary>
+        ///     Gets the current assemblys name without path and extension.
+        /// </summary>
+        public static string ApplicationName
+        {
+            get { return Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location); }
+        }
+
+        /// <summary>
+        ///     Gets the current users local application data path.
+        /// </summary>
+        public static string LocalAppDataPath
+        {
+            get
+            {
+                var path = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    ApplicationName);
+
+                if (!Directory.Exists(path))
+                {
+                    Directory.CreateDirectory(path);
+                }
+
+                return path;
+            }
+        }
+
+        public static void Logoff()
+        {
+            ExitWindowsEx(ExitWindows.LogOff, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
+        }
+
+        public static bool Reboot()
+        {
+            if (!TokenAdjuster.EnablePrivilege("SeShutdownPrivilege", true))
+            {
+                return false;
+            }
+
+            return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
+        }
+
         #region Windows API Flags
+
         [Flags]
         public enum ExitWindows : uint
         {
@@ -21,11 +65,11 @@ namespace Libarius.System
             RestartApps = 0x40,
             // plus AT MOST ONE of the following two:
             Force = 0x04,
-            ForceIfHung = 0x10,
+            ForceIfHung = 0x10
         }
 
         [Flags]
-        enum ShutdownReason : uint
+        private enum ShutdownReason : uint
         {
             MajorApplication = 0x00040000,
             MajorHardware = 0x00010000,
@@ -70,53 +114,8 @@ namespace Libarius.System
         [DllImport("user32.dll", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool ExitWindowsEx(ExitWindows uFlags, ShutdownReason dwReason);
+
         #endregion
-
-        public static void Logoff()
-        {
-            ExitWindowsEx(ExitWindows.LogOff, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
-        }
-
-        public static bool Reboot()
-        {
-            if (!TokenAdjuster.EnablePrivilege("SeShutdownPrivilege", true))
-            {
-                return false;
-            }
-
-            return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
-        }
-
-        /// <summary>
-        /// Gets the current assemblys name without path and extension.
-        /// </summary>
-        public static string ApplicationName
-        {
-            get
-            {
-                return Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
-            }
-        }
-
-        /// <summary>
-        /// Gets the current users local application data path.
-        /// </summary>
-        public static string LocalAppDataPath
-        {
-            get
-            {
-                var path = Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    ApplicationName);
-
-                if (!Directory.Exists(path))
-                {
-                    Directory.CreateDirectory(path);
-                }
-
-                return path;
-            }
-        }
     }
 
     public sealed class TokenAdjuster
@@ -156,14 +155,14 @@ namespace Libarius.System
 
         public static bool EnablePrivilege(string lpszPrivilege, bool bEnablePrivilege)
         {
-            bool retval = false;
-            int ltkpOld = 0;
-            IntPtr hToken = IntPtr.Zero;
-            TOKEN_PRIVILEGES tkp = new TOKEN_PRIVILEGES();
+            var retval = false;
+            var ltkpOld = 0;
+            var hToken = IntPtr.Zero;
+            var tkp = new TOKEN_PRIVILEGES();
             tkp.Privileges = new int[3];
-            TOKEN_PRIVILEGES tkpOld = new TOKEN_PRIVILEGES();
+            var tkpOld = new TOKEN_PRIVILEGES();
             tkpOld.Privileges = new int[3];
-            LUID tLUID = new LUID();
+            var tLUID = new LUID();
             tkp.PrivilegeCount = 1;
             if (bEnablePrivilege)
                 tkp.Privileges[2] = SE_PRIVILEGE_ENABLED;
@@ -171,7 +170,7 @@ namespace Libarius.System
                 tkp.Privileges[2] = 0;
             if (LookupPrivilegeValue(null, lpszPrivilege, ref tLUID))
             {
-                Process proc = Process.GetCurrentProcess();
+                var proc = Process.GetCurrentProcess();
                 if (proc.Handle != IntPtr.Zero)
                 {
                     if (OpenProcessToken(proc.Handle, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
@@ -182,7 +181,7 @@ namespace Libarius.System
                         tkp.Privileges[1] = tLUID.HighPart;
                         tkp.Privileges[0] = tLUID.LowPart;
                         const int bufLength = 256;
-                        IntPtr tu = Marshal.AllocHGlobal(bufLength);
+                        var tu = Marshal.AllocHGlobal(bufLength);
                         Marshal.StructureToPtr(tkp, tu, true);
                         if (AdjustTokenPrivileges(hToken, 0, tu, bufLength, IntPtr.Zero, ref ltkpOld) != 0)
                         {
@@ -192,7 +191,7 @@ namespace Libarius.System
                                 retval = true; // Token changed
                             }
                         }
-                        TOKEN_PRIVILEGES tokp = (TOKEN_PRIVILEGES)Marshal.PtrToStructure(tu, typeof(TOKEN_PRIVILEGES));
+                        var tokp = (TOKEN_PRIVILEGES) Marshal.PtrToStructure(tu, typeof (TOKEN_PRIVILEGES));
                         Marshal.FreeHGlobal(tu);
                     }
                 }
@@ -214,26 +213,25 @@ namespace Libarius.System
         [StructLayout(LayoutKind.Sequential)]
         private struct LUID_AND_ATTRIBUTES
         {
-            private LUID Luid;
-            private int Attributes;
+            private readonly LUID Luid;
+            private readonly int Attributes;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         internal struct TOKEN_PRIVILEGES
         {
             internal int PrivilegeCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
-            internal int[] Privileges;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] internal int[] Privileges;
         }
 
         [StructLayout(LayoutKind.Sequential)]
         private struct _PRIVILEGE_SET
         {
-            private int PrivilegeCount;
-            private int Control;
+            private readonly int PrivilegeCount;
+            private readonly int Control;
 
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] // ANYSIZE_ARRAY = 1
-            private LUID_AND_ATTRIBUTES[] Privileges;
+            private readonly LUID_AND_ATTRIBUTES[] Privileges;
         }
     }
 }
