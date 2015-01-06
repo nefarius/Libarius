@@ -45,6 +45,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CLI\Options.cs" />
     <Compile Include="Compression\QuickLZ\QuickLZ.cs" />
     <Compile Include="Active Directory\ADHelper.cs" />
     <Compile Include="Cryptography\AesHelper.cs" />
