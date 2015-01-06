@@ -4,11 +4,42 @@ using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
+using Microsoft.Win32;
 
 namespace Libarius.System
 {
     public static class SystemHelper
     {
+        /// <summary>
+        ///     Gets the TeamViewer ID if installed.
+        /// </summary>
+        public static string TeamViewerId
+        {
+            get
+            {
+                const uint maxVersion = 50;
+                const string x86Path = @"SOFTWARE\TeamViewer\Version{0}";
+                const string x64Path = @"SOFTWARE\Wow6432Node\TeamViewer\Version{0}";
+
+                for (uint i = 1; i <= maxVersion; i++)
+                {
+                    RegistryKey tvKey;
+                    var path = string.Format(Is64BitOperatingSystem ? x64Path : x86Path, i);
+                    if ((tvKey = Registry.LocalMachine.OpenSubKey(path)) == null)
+                        continue;
+
+                    var val = tvKey.GetValue("ClientID");
+
+                    if (val == null)
+                        continue;
+
+                    return val.ToString();
+                }
+
+                return string.Empty;
+            }
+        }
+
         /// <summary>
         ///     Gets the current assemblys name without path and extension.
         /// </summary>
@@ -37,6 +68,31 @@ namespace Libarius.System
             }
         }
 
+        [DllImport("kernel32.dll", SetLastError = true, CallingConvention = CallingConvention.Winapi)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool IsWow64Process(
+            [In] IntPtr hProcess,
+            [Out] out bool wow64Process
+            );
+
+        private static bool InternalCheckIsWow64()
+        {
+            if ((Environment.OSVersion.Version.Major == 5 && Environment.OSVersion.Version.Minor >= 1) ||
+                Environment.OSVersion.Version.Major >= 6)
+            {
+                using (var p = Process.GetCurrentProcess())
+                {
+                    bool retVal;
+                    if (!IsWow64Process(p.Handle, out retVal))
+                    {
+                        return false;
+                    }
+                    return retVal;
+                }
+            }
+            return false;
+        }
+
         public static void Logoff()
         {
             ExitWindowsEx(ExitWindows.LogOff, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
@@ -51,6 +107,9 @@ namespace Libarius.System
 
             return ExitWindowsEx(ExitWindows.Reboot, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
         }
+
+        private static readonly bool Is64BitProcess = (IntPtr.Size == 8);
+        private static readonly bool Is64BitOperatingSystem = Is64BitProcess || InternalCheckIsWow64();
 
         #region Windows API Flags
 

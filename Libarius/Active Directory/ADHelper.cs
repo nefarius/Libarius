@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Linq;
 
@@ -7,6 +8,26 @@ namespace Libarius.Active_Directory
 {
     public static class AdHelper
     {
+        /// <summary>
+        ///     Gets the current users full name from the domains directory.
+        /// </summary>
+        public static string FullName
+        {
+            get
+            {
+                try
+                {
+                    var de = new DirectoryEntry(string.Format("WinNT://{0}/{1}",
+                        Environment.UserDomainName, Environment.UserName));
+                    return de.Properties["fullName"].Value.ToString();
+                }
+                catch
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
         /// <summary>
         ///     Returns a list of groups the supplied user is member of.
         /// </summary>
