@@ -102,7 +102,7 @@ namespace Libarius.Active_Directory
         /// <returns></returns>
         public static bool IsUserInGroup(string userName, Guid gUid)
         {
-            return (GetGroups(userName).Find(group => group.Guid == gUid) == null);
+            return (GetGroups(userName).Find(group => group.Guid == gUid) != null);
         }
     }
 }
