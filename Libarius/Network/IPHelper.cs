@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -65,6 +66,78 @@ namespace Libarius.Network
                     select gw.Address;
 
                 return result.FirstOrDefault();
+            }
+        }
+
+        /// <summary>
+        ///     Returns the active connections first dhcp server address.
+        /// </summary>
+        public static IPAddress DhcpServerAddress
+        {
+            get
+            {
+                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
+                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
+                    let ifprops = i.GetIPProperties()
+                    where ifprops.DhcpServerAddresses.Count > 0
+                    let dhcp = ifprops.DhcpServerAddresses.FirstOrDefault()
+                    select dhcp;
+
+                return result.FirstOrDefault();
+            }
+        }
+
+        /// <summary>
+        ///     Returns the active connections dhcp server addresses.
+        /// </summary>
+        public static IEnumerable<IPAddress> DhcpServerAddresses
+        {
+            get
+            {
+                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
+                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
+                    let ifprops = i.GetIPProperties()
+                    where ifprops.DhcpServerAddresses.Count > 0
+                    let dhcp = ifprops.DhcpServerAddresses.FirstOrDefault()
+                    select dhcp;
+
+                return result;
+            }
+        }
+
+        /// <summary>
+        ///     Returns the active connections dns server address.
+        /// </summary>
+        public static IPAddress DnsServerAddress
+        {
+            get
+            {
+                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
+                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
+                    let ifprops = i.GetIPProperties()
+                    where ifprops.DnsAddresses.Count > 0
+                    let dns = ifprops.DnsAddresses.FirstOrDefault()
+                    select dns;
+
+                return result.FirstOrDefault();
+            }
+        }
+
+        /// <summary>
+        ///     Returns the active connections dns server addresses.
+        /// </summary>
+        public static IEnumerable<IPAddress> DnsServerAddresses
+        {
+            get
+            {
+                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
+                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
+                    let ifprops = i.GetIPProperties()
+                    where ifprops.DnsAddresses.Count > 0
+                    let dns = ifprops.DnsAddresses.FirstOrDefault()
+                    select dns;
+
+                return result;
             }
         }
     }
