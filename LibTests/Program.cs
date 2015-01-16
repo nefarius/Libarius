@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Libarius.Active_Directory;
 using Libarius.Network;
 using Libarius.System;
 
@@ -25,6 +26,8 @@ namespace LibTests
             {
                 Console.WriteLine(gw);
             }
+
+            Console.WriteLine(AdHelper.MachineDomain);
 
             Console.ReadKey();
         }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
+using System.DirectoryServices.ActiveDirectory;
 using System.Linq;
 
 namespace Libarius.Active_Directory
@@ -22,6 +23,24 @@ namespace Libarius.Active_Directory
                     return de.Properties["fullName"].Value.ToString();
                 }
                 catch
+                {
+                    return string.Empty;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Returns the current machines domain name.
+        /// </summary>
+        public static string MachineDomain
+        {
+            get
+            {
+                try
+                {
+                    return Domain.GetComputerDomain().ToString();
+                }
+                catch (ActiveDirectoryObjectNotFoundException)
                 {
                     return string.Empty;
                 }
@@ -56,8 +75,8 @@ namespace Libarius.Active_Directory
             if (user != null)
             {
                 result = from p in user.GetAuthorizationGroups()
-                    where p is GroupPrincipal
-                    select p as GroupPrincipal;
+                         where p is GroupPrincipal
+                         select p as GroupPrincipal;
             }
 
             return (result != null) ? result.ToList() : null;
