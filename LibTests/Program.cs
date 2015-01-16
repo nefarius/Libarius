@@ -11,13 +11,20 @@ namespace LibTests
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Private: {0}\nGateway: {1}\nPublic:  {2}", 
-                IpHelper.PrivateIpAddress, IpHelper.DefaultGateway, IpHelper.PublicIpAddress);
+            foreach (var gw in IpHelper.DefaultGatewayAdresses)
+            {
+                Console.WriteLine(gw);
+            }
 
-            UPnP.Discover();
-            Console.WriteLine("Ext. IP: {0}", UPnP.ExternalIp);
+            foreach (var gw in IpHelper.DhcpServerAddresses)
+            {
+                Console.WriteLine(gw);
+            }
 
-            Console.WriteLine("App Name: {0}", SystemHelper.ApplicationName);
+            foreach (var gw in IpHelper.DnsServerAddresses)
+            {
+                Console.WriteLine(gw);
+            }
 
             Console.ReadKey();
         }

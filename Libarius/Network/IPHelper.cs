@@ -54,36 +54,17 @@ namespace Libarius.Network
         /// <summary>
         ///     Returns the default gateway.
         /// </summary>
-        public static IPAddress DefaultGateway
+        public static IEnumerable<IPAddress> DefaultGatewayAdresses
         {
             get
             {
                 var result = from i in NetworkInterface.GetAllNetworkInterfaces()
-                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
                     let ifprops = i.GetIPProperties()
-                    where ifprops.GatewayAddresses.Count > 0
-                    let gw = ifprops.GatewayAddresses.FirstOrDefault()
+                    from gw in ifprops.GatewayAddresses
+                    where gw.Address.AddressFamily.Equals(AddressFamily.InterNetwork)
                     select gw.Address;
 
-                return result.FirstOrDefault();
-            }
-        }
-
-        /// <summary>
-        ///     Returns the active connections first dhcp server address.
-        /// </summary>
-        public static IPAddress DhcpServerAddress
-        {
-            get
-            {
-                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
-                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
-                    let ifprops = i.GetIPProperties()
-                    where ifprops.DhcpServerAddresses.Count > 0
-                    let dhcp = ifprops.DhcpServerAddresses.FirstOrDefault()
-                    select dhcp;
-
-                return result.FirstOrDefault();
+                return result;
             }
         }
 
@@ -95,31 +76,12 @@ namespace Libarius.Network
             get
             {
                 var result = from i in NetworkInterface.GetAllNetworkInterfaces()
-                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
                     let ifprops = i.GetIPProperties()
-                    where ifprops.DhcpServerAddresses.Count > 0
-                    let dhcp = ifprops.DhcpServerAddresses.FirstOrDefault()
+                    from dhcp in ifprops.DhcpServerAddresses
+                    where dhcp.AddressFamily.Equals(AddressFamily.InterNetwork)
                     select dhcp;
 
                 return result;
-            }
-        }
-
-        /// <summary>
-        ///     Returns the active connections dns server address.
-        /// </summary>
-        public static IPAddress DnsServerAddress
-        {
-            get
-            {
-                var result = from i in NetworkInterface.GetAllNetworkInterfaces()
-                    where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
-                    let ifprops = i.GetIPProperties()
-                    where ifprops.DnsAddresses.Count > 0
-                    let dns = ifprops.DnsAddresses.FirstOrDefault()
-                    select dns;
-
-                return result.FirstOrDefault();
             }
         }
 
@@ -133,8 +95,8 @@ namespace Libarius.Network
                 var result = from i in NetworkInterface.GetAllNetworkInterfaces()
                     where i.NetworkInterfaceType.Equals(NetworkInterfaceType.Ethernet)
                     let ifprops = i.GetIPProperties()
-                    where ifprops.DnsAddresses.Count > 0
-                    let dns = ifprops.DnsAddresses.FirstOrDefault()
+                    from dns in ifprops.DnsAddresses
+                    where dns.AddressFamily.Equals(AddressFamily.InterNetwork)
                     select dns;
 
                 return result;
