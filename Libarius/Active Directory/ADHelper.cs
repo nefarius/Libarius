@@ -42,7 +42,25 @@ namespace Libarius.Active_Directory
                 }
                 catch (ActiveDirectoryObjectNotFoundException)
                 {
-                    return string.Empty;
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Returns the current machines site name.
+        /// </summary>
+        public static string MachineSite
+        {
+            get
+            {
+                try
+                {
+                    return ActiveDirectorySite.GetComputerSite().Name;
+                }
+                catch (ActiveDirectoryServerDownException)
+                {
+                    return null;
                 }
             }
         }
@@ -75,8 +93,8 @@ namespace Libarius.Active_Directory
             if (user != null)
             {
                 result = from p in user.GetAuthorizationGroups()
-                         where p is GroupPrincipal
-                         select p as GroupPrincipal;
+                    where p is GroupPrincipal
+                    select p as GroupPrincipal;
             }
 
             return (result != null) ? result.ToList() : null;

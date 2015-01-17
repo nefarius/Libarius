@@ -31,6 +31,8 @@ namespace LibTests
 
             Console.WriteLine(SystemHelper.UpTime);
 
+            Console.WriteLine(AdHelper.MachineSite);
+
             Console.ReadKey();
         }
     }
