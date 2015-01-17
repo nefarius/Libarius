@@ -29,6 +29,8 @@ namespace LibTests
 
             Console.WriteLine(AdHelper.MachineDomain);
 
+            Console.WriteLine(SystemHelper.UpTime);
+
             Console.ReadKey();
         }
     }
