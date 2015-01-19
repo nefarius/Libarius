@@ -62,6 +62,10 @@ namespace Libarius.Active_Directory
                 {
                     return null;
                 }
+                catch (ActiveDirectoryObjectNotFoundException)
+                {
+                    return null;
+                }
             }
         }
 
