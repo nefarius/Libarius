@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Management;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -80,6 +82,22 @@ namespace Libarius.System
                     uptime.NextValue(); //Call this an extra time before reading its value
                     return TimeSpan.FromSeconds(uptime.NextValue());
                 }
+            }
+        }
+
+        /// <summary>
+        ///     Returns the friendly OS name.
+        /// </summary>
+        public static string OsFriendlyName
+        {
+            get
+            {
+                var name =
+                    (from x in
+                        new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem").Get()
+                            .Cast<ManagementObject>()
+                        select x.GetPropertyValue("Caption")).FirstOrDefault();
+                return name != null ? name.ToString() : "Unknown";
             }
         }
 
