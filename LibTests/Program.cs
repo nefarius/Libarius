@@ -14,6 +14,8 @@ namespace LibTests
         {
             Console.WriteLine(SystemHelper.OsFriendlyName);
 
+            Console.WriteLine("SiteDesc: {0}", AdHelper.MachineSiteDescription);
+
             Console.ReadKey();
         }
     }

@@ -69,6 +69,23 @@ namespace Libarius.Active_Directory
             }
         }
 
+        public static string MachineSiteDescription
+        {
+            get
+            {
+                // get current domain root DSE
+                var root = new DirectoryEntry("LDAP://RootDSE");
+                // get configuration DN
+                var configDn = root.Properties["configurationNamingContext"].Value.ToString();
+                // build site DN for LDAP query
+                var siteDn = string.Format("LDAP://CN={0},CN=Sites,{1}", MachineSite, configDn);
+                // query LDAP
+                var siteDescription = new DirectoryEntry(siteDn);
+                // return content of description property
+                return siteDescription.Properties["description"].Value.ToString();
+            }
+        }
+
         /// <summary>
         ///     Returns a list of groups the supplied user is member of.
         /// </summary>
