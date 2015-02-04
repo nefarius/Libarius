@@ -87,6 +87,7 @@ namespace Libarius.System
 
         /// <summary>
         ///     Returns the friendly OS name.
+        ///     <remarks>http://stackoverflow.com/questions/577634/how-to-get-the-friendly-os-version-name</remarks>
         /// </summary>
         public static string OsFriendlyName
         {
