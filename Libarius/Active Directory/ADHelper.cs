@@ -22,9 +22,10 @@ namespace Libarius.Active_Directory
                         Environment.UserDomainName, Environment.UserName));
                     return de.Properties["fullName"].Value.ToString();
                 }
+                    // TODO: improve this!
                 catch
                 {
-                    return string.Empty;
+                    return null;
                 }
             }
         }
@@ -86,6 +87,7 @@ namespace Libarius.Active_Directory
                     // return content of description property
                     return siteDescription.Properties["description"].Value.ToString();
                 }
+                    // TODO: improve this!
                 catch { return null; }
             }
         }
