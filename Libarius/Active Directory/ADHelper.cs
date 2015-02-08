@@ -73,16 +73,20 @@ namespace Libarius.Active_Directory
         {
             get
             {
-                // get current domain root DSE
-                var root = new DirectoryEntry("LDAP://RootDSE");
-                // get configuration DN
-                var configDn = root.Properties["configurationNamingContext"].Value.ToString();
-                // build site DN for LDAP query
-                var siteDn = string.Format("LDAP://CN={0},CN=Sites,{1}", MachineSite, configDn);
-                // query LDAP
-                var siteDescription = new DirectoryEntry(siteDn);
-                // return content of description property
-                return siteDescription.Properties["description"].Value.ToString();
+                try
+                {
+                    // get current domain root DSE
+                    var root = new DirectoryEntry("LDAP://RootDSE");
+                    // get configuration DN
+                    var configDn = root.Properties["configurationNamingContext"].Value.ToString();
+                    // build site DN for LDAP query
+                    var siteDn = string.Format("LDAP://CN={0},CN=Sites,{1}", MachineSite, configDn);
+                    // query LDAP
+                    var siteDescription = new DirectoryEntry(siteDn);
+                    // return content of description property
+                    return siteDescription.Properties["description"].Value.ToString();
+                }
+                catch { return null; }
             }
         }
 
@@ -114,8 +118,8 @@ namespace Libarius.Active_Directory
             if (user != null)
             {
                 result = from p in user.GetAuthorizationGroups()
-                    where p is GroupPrincipal
-                    select p as GroupPrincipal;
+                         where p is GroupPrincipal
+                         select p as GroupPrincipal;
             }
 
             return (result != null) ? result.ToList() : null;
