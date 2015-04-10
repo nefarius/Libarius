@@ -33,7 +33,8 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Libarius.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -67,9 +68,6 @@
     <Compile Include="System\SystemHelper.cs" />
     <Compile Include="WPF\BindingHelper.cs" />
     <Compile Include="WPF\WindowSettings.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Libarius.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
