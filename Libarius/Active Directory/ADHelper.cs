@@ -9,6 +9,19 @@ namespace Libarius.Active_Directory
 {
     public static class AdHelper
     {
+        public enum ObjectClass
+        {
+            User,
+            Group,
+            Computer
+        }
+
+        public enum ReturnType
+        {
+            DistinguishedName,
+            ObjectGuid
+        }
+
         /// <summary>
         ///     Gets the current users full name from the domains directory.
         /// </summary>
@@ -88,7 +101,29 @@ namespace Libarius.Active_Directory
                     return siteDescription.Properties["description"].Value.ToString();
                 }
                     // TODO: improve this!
-                catch { return null; }
+                catch
+                {
+                    return null;
+                }
+            }
+        }
+
+        /// <summary>
+        ///     Primitive check if current session is logged on to a domain.
+        /// </summary>
+        public static bool IsInActiveDirectory
+        {
+            get
+            {
+                try
+                {
+                    Domain.GetComputerDomain();
+                    return true;
+                }
+                catch (ActiveDirectoryObjectNotFoundException)
+                {
+                    return false;
+                }
             }
         }
 
@@ -120,8 +155,8 @@ namespace Libarius.Active_Directory
             if (user != null)
             {
                 result = from p in user.GetAuthorizationGroups()
-                         where p is GroupPrincipal
-                         select p as GroupPrincipal;
+                    where p is GroupPrincipal
+                    select p as GroupPrincipal;
             }
 
             return (result != null) ? result.ToList() : null;
@@ -169,21 +204,8 @@ namespace Libarius.Active_Directory
             return (GetGroups(userName).Find(group => group.Guid == gUid) != null);
         }
 
-        public enum ObjectClass
-        {
-            User,
-            Group,
-            Computer
-        }
-
-        public enum ReturnType
-        {
-            DistinguishedName,
-            ObjectGuid
-        }
-
         /// <summary>
-        /// Searches for provided object in directory and resolves it to distinguished name.
+        ///     Searches for provided object in directory and resolves it to distinguished name.
         /// </summary>
         /// <param name="objectCls">The object class to search for.</param>
         /// <param name="returnValue">The format of the returned string.</param>
@@ -285,7 +307,7 @@ namespace Libarius.Active_Directory
             {
                 using (var user = new DirectoryEntry(userDn))
                 {
-                    var val = (int)user.Properties["userAccountControl"].Value;
+                    var val = (int) user.Properties["userAccountControl"].Value;
                     user.Properties["userAccountControl"].Value = val & ~0x2; //ADS_UF_NORMAL_ACCOUNT;
 
                     user.CommitChanges();
@@ -304,7 +326,7 @@ namespace Libarius.Active_Directory
             {
                 using (var user = new DirectoryEntry(userDn))
                 {
-                    var val = (int)user.Properties["userAccountControl"].Value;
+                    var val = (int) user.Properties["userAccountControl"].Value;
                     user.Properties["userAccountControl"].Value = val | 0x2; //ADS_UF_ACCOUNTDISABLE;
 
                     user.CommitChanges();
