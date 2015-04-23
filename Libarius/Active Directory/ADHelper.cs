@@ -429,7 +429,7 @@ namespace Libarius.Active_Directory
         {
             using (var ent = new DirectoryEntry(objectDn))
             {
-                return ent.Properties[attributeName].Value.ToString();
+                return string.Format("{0}", ent.Properties[attributeName].Value);
             }
         }
 
