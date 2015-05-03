@@ -9,6 +9,9 @@ using System.Text.RegularExpressions;
 
 namespace Libarius.Network
 {
+    /// <summary>
+    ///     Utility class for common IP tasks.
+    /// </summary>
     public static class IpHelper
     {
         /// <summary>

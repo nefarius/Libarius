@@ -1,17 +1,28 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 
 namespace Libarius.System
 {
-    public sealed class LimitInstance
+    /// <summary>
+    ///     Provides a check if a named instance already exists on the current system.
+    /// </summary>
+    public sealed class LimitInstance : IDisposable
     {
-        private readonly string _instanceName;
         private Mutex _mutex;
+        private readonly string _instanceName;
 
+        /// <summary>
+        ///     Creates new named instance check.
+        /// </summary>
+        /// <param name="instanceName">The name of the instance to create or check.</param>
         public LimitInstance(string instanceName)
         {
             _instanceName = instanceName;
         }
 
+        /// <summary>
+        ///     Checks is the current named instance is the only one on the system.
+        /// </summary>
         public bool IsOnlyInstance
         {
             get
@@ -29,6 +40,9 @@ namespace Libarius.System
             }
         }
 
+        /// <summary>
+        ///     Releases the underlying mutex.
+        /// </summary>
         public void Dispose()
         {
             if (_mutex != null)

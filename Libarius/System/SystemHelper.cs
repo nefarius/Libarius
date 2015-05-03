@@ -10,6 +10,9 @@ using Microsoft.Win32;
 
 namespace Libarius.System
 {
+    /// <summary>
+    ///     Utility class to provide some common system tasks.
+    /// </summary>
     public static class SystemHelper
     {
         /// <summary>
@@ -127,11 +130,18 @@ namespace Libarius.System
             return false;
         }
 
+        /// <summary>
+        ///     Requests the current session to log off.
+        /// </summary>
         public static void Logoff()
         {
             ExitWindowsEx(ExitWindows.LogOff, ShutdownReason.MajorOther | ShutdownReason.MinorOther);
         }
 
+        /// <summary>
+        ///     Requests a system reboot.
+        /// </summary>
+        /// <returns>Returns true if the request was successful, false otherwise.</returns>
         public static bool Reboot()
         {
             if (!TokenAdjuster.EnablePrivilege("SeShutdownPrivilege", true))
@@ -209,122 +219,127 @@ namespace Libarius.System
         private static extern bool ExitWindowsEx(ExitWindows uFlags, ShutdownReason dwReason);
 
         #endregion
-    }
 
-    public sealed class TokenAdjuster
-    {
-        // PInvoke stuff required to set/enable security privileges
-        private const int SE_PRIVILEGE_ENABLED = 0x00000002;
-        private const int TOKEN_ADJUST_PRIVILEGES = 0X00000020;
-        private const int TOKEN_QUERY = 0X00000008;
-        private const int TOKEN_ALL_ACCESS = 0X001f01ff;
-        private const int PROCESS_QUERY_INFORMATION = 0X00000400;
+        #region Token Adjuster
 
-        [DllImport("advapi32", SetLastError = true), SuppressUnmanagedCodeSecurity]
-        private static extern int OpenProcessToken(
-            IntPtr ProcessHandle, // handle to process
-            int DesiredAccess, // desired access to process
-            ref IntPtr TokenHandle // handle to open access token
-            );
-
-        [DllImport("kernel32", SetLastError = true),
-         SuppressUnmanagedCodeSecurity]
-        private static extern bool CloseHandle(IntPtr handle);
-
-        [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern int AdjustTokenPrivileges(
-            IntPtr TokenHandle,
-            int DisableAllPrivileges,
-            IntPtr NewState,
-            int BufferLength,
-            IntPtr PreviousState,
-            ref int ReturnLength);
-
-        [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        private static extern bool LookupPrivilegeValue(
-            string lpSystemName,
-            string lpName,
-            ref LUID lpLuid);
-
-        public static bool EnablePrivilege(string lpszPrivilege, bool bEnablePrivilege)
+        private static class TokenAdjuster
         {
-            var retval = false;
-            var ltkpOld = 0;
-            var hToken = IntPtr.Zero;
-            var tkp = new TOKEN_PRIVILEGES();
-            tkp.Privileges = new int[3];
-            var tkpOld = new TOKEN_PRIVILEGES();
-            tkpOld.Privileges = new int[3];
-            var tLUID = new LUID();
-            tkp.PrivilegeCount = 1;
-            if (bEnablePrivilege)
-                tkp.Privileges[2] = SE_PRIVILEGE_ENABLED;
-            else
-                tkp.Privileges[2] = 0;
-            if (LookupPrivilegeValue(null, lpszPrivilege, ref tLUID))
+            // PInvoke stuff required to set/enable security privileges
+            private const int SE_PRIVILEGE_ENABLED = 0x00000002;
+            private const int TOKEN_ADJUST_PRIVILEGES = 0X00000020;
+            private const int TOKEN_QUERY = 0X00000008;
+            private const int TOKEN_ALL_ACCESS = 0X001f01ff;
+            private const int PROCESS_QUERY_INFORMATION = 0X00000400;
+
+            [DllImport("advapi32", SetLastError = true), SuppressUnmanagedCodeSecurity]
+            private static extern int OpenProcessToken(
+                IntPtr ProcessHandle, // handle to process
+                int DesiredAccess, // desired access to process
+                ref IntPtr TokenHandle // handle to open access token
+                );
+
+            [DllImport("kernel32", SetLastError = true),
+             SuppressUnmanagedCodeSecurity]
+            private static extern bool CloseHandle(IntPtr handle);
+
+            [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern int AdjustTokenPrivileges(
+                IntPtr TokenHandle,
+                int DisableAllPrivileges,
+                IntPtr NewState,
+                int BufferLength,
+                IntPtr PreviousState,
+                ref int ReturnLength);
+
+            [DllImport("advapi32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+            private static extern bool LookupPrivilegeValue(
+                string lpSystemName,
+                string lpName,
+                ref LUID lpLuid);
+
+            public static bool EnablePrivilege(string lpszPrivilege, bool bEnablePrivilege)
             {
-                var proc = Process.GetCurrentProcess();
-                if (proc.Handle != IntPtr.Zero)
+                var retval = false;
+                var ltkpOld = 0;
+                var hToken = IntPtr.Zero;
+                var tkp = new TOKEN_PRIVILEGES();
+                tkp.Privileges = new int[3];
+                var tkpOld = new TOKEN_PRIVILEGES();
+                tkpOld.Privileges = new int[3];
+                var tLUID = new LUID();
+                tkp.PrivilegeCount = 1;
+                if (bEnablePrivilege)
+                    tkp.Privileges[2] = SE_PRIVILEGE_ENABLED;
+                else
+                    tkp.Privileges[2] = 0;
+                if (LookupPrivilegeValue(null, lpszPrivilege, ref tLUID))
                 {
-                    if (OpenProcessToken(proc.Handle, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
-                        ref hToken) != 0)
+                    var proc = Process.GetCurrentProcess();
+                    if (proc.Handle != IntPtr.Zero)
                     {
-                        tkp.PrivilegeCount = 1;
-                        tkp.Privileges[2] = SE_PRIVILEGE_ENABLED;
-                        tkp.Privileges[1] = tLUID.HighPart;
-                        tkp.Privileges[0] = tLUID.LowPart;
-                        const int bufLength = 256;
-                        var tu = Marshal.AllocHGlobal(bufLength);
-                        Marshal.StructureToPtr(tkp, tu, true);
-                        if (AdjustTokenPrivileges(hToken, 0, tu, bufLength, IntPtr.Zero, ref ltkpOld) != 0)
+                        if (OpenProcessToken(proc.Handle, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY,
+                            ref hToken) != 0)
                         {
-                            // successful AdjustTokenPrivileges doesn't mean privilege could be changed
-                            if (Marshal.GetLastWin32Error() == 0)
+                            tkp.PrivilegeCount = 1;
+                            tkp.Privileges[2] = SE_PRIVILEGE_ENABLED;
+                            tkp.Privileges[1] = tLUID.HighPart;
+                            tkp.Privileges[0] = tLUID.LowPart;
+                            const int bufLength = 256;
+                            var tu = Marshal.AllocHGlobal(bufLength);
+                            Marshal.StructureToPtr(tkp, tu, true);
+                            if (AdjustTokenPrivileges(hToken, 0, tu, bufLength, IntPtr.Zero, ref ltkpOld) != 0)
                             {
-                                retval = true; // Token changed
+                                // successful AdjustTokenPrivileges doesn't mean privilege could be changed
+                                if (Marshal.GetLastWin32Error() == 0)
+                                {
+                                    retval = true; // Token changed
+                                }
                             }
+                            var tokp = (TOKEN_PRIVILEGES)Marshal.PtrToStructure(tu, typeof(TOKEN_PRIVILEGES));
+                            Marshal.FreeHGlobal(tu);
                         }
-                        var tokp = (TOKEN_PRIVILEGES) Marshal.PtrToStructure(tu, typeof (TOKEN_PRIVILEGES));
-                        Marshal.FreeHGlobal(tu);
                     }
                 }
+                if (hToken != IntPtr.Zero)
+                {
+                    CloseHandle(hToken);
+                }
+                return retval;
             }
-            if (hToken != IntPtr.Zero)
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct LUID
             {
-                CloseHandle(hToken);
+                internal int LowPart;
+                internal int HighPart;
             }
-            return retval;
+
+            [StructLayout(LayoutKind.Sequential)]
+            private struct LUID_AND_ATTRIBUTES
+            {
+                private readonly LUID Luid;
+                private readonly int Attributes;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal struct TOKEN_PRIVILEGES
+            {
+                internal int PrivilegeCount;
+                [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]
+                internal int[] Privileges;
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            private struct _PRIVILEGE_SET
+            {
+                private readonly int PrivilegeCount;
+                private readonly int Control;
+
+                [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] // ANYSIZE_ARRAY = 1
+                private readonly LUID_AND_ATTRIBUTES[] Privileges;
+            }
         }
 
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct LUID
-        {
-            internal int LowPart;
-            internal int HighPart;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct LUID_AND_ATTRIBUTES
-        {
-            private readonly LUID Luid;
-            private readonly int Attributes;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        internal struct TOKEN_PRIVILEGES
-        {
-            internal int PrivilegeCount;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)] internal int[] Privileges;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct _PRIVILEGE_SET
-        {
-            private readonly int PrivilegeCount;
-            private readonly int Control;
-
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)] // ANYSIZE_ARRAY = 1
-            private readonly LUID_AND_ATTRIBUTES[] Privileges;
-        }
+        #endregion
     }
 }

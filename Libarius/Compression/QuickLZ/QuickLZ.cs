@@ -17,6 +17,9 @@ using System;
 
 namespace Libarius.Compression.QuickLZ
 {
+    /// <summary>
+    ///     QuickLZ data compression library
+    /// </summary>
     public static class QuickLZ
     {
         public const int QLZ_VERSION_MAJOR = 1;
@@ -41,6 +44,11 @@ namespace Libarius.Compression.QuickLZ
             return ((source[0] & 2) == 2) ? 9 : 3;
         }
 
+        /// <summary>
+        ///     Returns the size in bytes needed to store the decompressed data.
+        /// </summary>
+        /// <param name="source">Compressed content.</param>
+        /// <returns>The decompressed size in bytes.</returns>
         public static int sizeDecompressed(byte[] source)
         {
             if (headerLen(source) == 9)
@@ -48,6 +56,11 @@ namespace Libarius.Compression.QuickLZ
             return source[2];
         }
 
+        /// <summary>
+        ///     Returns the size in bytes needed to store the compressed data.
+        /// </summary>
+        /// <param name="source">Uncompressed content.</param>
+        /// <returns>The compressed size in bytes.</returns>
         public static int sizeCompressed(byte[] source)
         {
             if (headerLen(source) == 9)
@@ -66,6 +79,12 @@ namespace Libarius.Compression.QuickLZ
             fast_write(dst, 5, size_compressed, 4);
         }
 
+        /// <summary>
+        ///     Compresses the supplied byte array at the given level.
+        /// </summary>
+        /// <param name="source">The uncompressed content.</param>
+        /// <param name="level">The compression level to use.</param>
+        /// <returns></returns>
         public static byte[] compress(byte[] source, int level)
         {
             var src = 0;
