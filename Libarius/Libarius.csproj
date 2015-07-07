@@ -44,6 +44,7 @@
     <Reference Include="System.Core" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Xaml" />
     <Reference Include="System.Xml.Linq" />
@@ -61,6 +62,8 @@
     <Compile Include="Cryptography\AesHelper.cs" />
     <Compile Include="Cryptography\StringCipher.cs" />
     <Compile Include="Filesystem\FilesystemHelper.cs" />
+    <Compile Include="GDI\BitonalConverter.cs" />
+    <Compile Include="Images\TiffHelper.cs" />
     <Compile Include="Logging\EventLogExtensions.cs" />
     <Compile Include="Logging\SimpleLog.cs" />
     <Compile Include="Network\IPHelper.cs" />
