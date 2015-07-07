@@ -5,18 +5,41 @@ using System.Runtime.InteropServices;
 namespace Libarius.GDI
 {
     /// <summary>
-    ///     <see href="http://www.codeproject.com/Articles/15186/Bitonal-TIFF-Image-Converter-for-NET"/>
+    ///     <see href="http://www.codeproject.com/Articles/15186/Bitonal-TIFF-Image-Converter-for-NET" />
     /// </summary>
-    public static class BitionalConverter
+    public static class BitonalConverter
     {
         /// <summary>
         ///     Performs a basic color/greyscale to 1-bit per pixel (monochrome) conversion.
         /// </summary>
         /// <param name="source">The original bitmap.</param>
         /// <returns>The converted monochrome bitmap.</returns>
-        public static Bitmap ToMono2(this Bitmap source)
+        public static Bitmap ConvertToMono2(Bitmap source)
         {
             return source.Clone(new Rectangle(0, 0, source.Width, source.Height), PixelFormat.Format1bppIndexed);
+        }
+
+        public static Bitmap ConvertToMonochrome(Bitmap source)
+        {
+            using (var gr = Graphics.FromImage(source)) // SourceImage is a Bitmap object
+            {
+                var gray_matrix = new[]
+                {
+                    new[] {0.299f, 0.299f, 0.299f, 0, 0},
+                    new[] {0.587f, 0.587f, 0.587f, 0, 0},
+                    new[] {0.114f, 0.114f, 0.114f, 0, 0},
+                    new float[] {0, 0, 0, 1, 0},
+                    new float[] {0, 0, 0, 0, 1}
+                };
+
+                var ia = new ImageAttributes();
+                ia.SetColorMatrix(new ColorMatrix(gray_matrix));
+                ia.SetThreshold((float) 0.8); // Change this threshold as needed
+                var rc = new Rectangle(0, 0, source.Width, source.Height);
+                gr.DrawImage(source, rc, 0, 0, source.Width, source.Height, GraphicsUnit.Pixel, ia);
+            }
+
+            return source;
         }
 
         /// <summary>
