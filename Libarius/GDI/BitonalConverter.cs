@@ -4,6 +4,9 @@ using System.Runtime.InteropServices;
 
 namespace Libarius.GDI
 {
+    /// <summary>
+    ///     <see href="http://www.codeproject.com/Articles/15186/Bitonal-TIFF-Image-Converter-for-NET">Original source.</see>
+    /// </summary>
     public static class BitionalConverter
     {
         public static Bitmap ToMono2(this Bitmap source)
@@ -13,9 +16,9 @@ namespace Libarius.GDI
 
         public static Bitmap ConvertToRGB(Bitmap original)
         {
-            Bitmap newImage = new Bitmap(original.Width, original.Height, PixelFormat.Format32bppArgb);
+            var newImage = new Bitmap(original.Width, original.Height, PixelFormat.Format32bppArgb);
             newImage.SetResolution(original.HorizontalResolution, original.VerticalResolution);
-            using (Graphics g = Graphics.FromImage(newImage))
+            using (var g = Graphics.FromImage(newImage))
             {
                 g.DrawImageUnscaled(original, 0, 0);
             }
@@ -31,7 +34,7 @@ namespace Libarius.GDI
             {
                 source = new Bitmap(original.Width, original.Height, PixelFormat.Format32bppArgb);
                 source.SetResolution(original.HorizontalResolution, original.VerticalResolution);
-                using (Graphics g = Graphics.FromImage(source))
+                using (var g = Graphics.FromImage(source))
                 {
                     g.DrawImageUnscaled(original, 0, 0);
                 }
@@ -42,53 +45,56 @@ namespace Libarius.GDI
             }
 
             // Lock source bitmap in memory
-            BitmapData sourceData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+            var sourceData = source.LockBits(new Rectangle(0, 0, source.Width, source.Height), ImageLockMode.ReadOnly,
+                PixelFormat.Format32bppArgb);
 
             // Copy image data to binary array
-            int imageSize = sourceData.Stride * sourceData.Height;
-            byte[] sourceBuffer = new byte[imageSize];
+            var imageSize = sourceData.Stride*sourceData.Height;
+            var sourceBuffer = new byte[imageSize];
             Marshal.Copy(sourceData.Scan0, sourceBuffer, 0, imageSize);
 
             // Unlock source bitmap
             source.UnlockBits(sourceData);
 
             // Create destination bitmap
-            Bitmap destination = new Bitmap(source.Width, source.Height, PixelFormat.Format1bppIndexed);
+            var destination = new Bitmap(source.Width, source.Height, PixelFormat.Format1bppIndexed);
             destination.SetResolution(original.HorizontalResolution, original.VerticalResolution);
 
             // Lock destination bitmap in memory
-            BitmapData destinationData = destination.LockBits(new Rectangle(0, 0, destination.Width, destination.Height), ImageLockMode.WriteOnly, PixelFormat.Format1bppIndexed);
+            var destinationData = destination.LockBits(new Rectangle(0, 0, destination.Width, destination.Height),
+                ImageLockMode.WriteOnly, PixelFormat.Format1bppIndexed);
 
             // Create destination buffer
-            imageSize = destinationData.Stride * destinationData.Height;
-            byte[] destinationBuffer = new byte[imageSize];
+            imageSize = destinationData.Stride*destinationData.Height;
+            var destinationBuffer = new byte[imageSize];
 
-            int sourceIndex = 0;
-            int destinationIndex = 0;
-            int pixelTotal = 0;
+            var sourceIndex = 0;
+            var destinationIndex = 0;
+            var pixelTotal = 0;
             byte destinationValue = 0;
-            int pixelValue = 128;
-            int height = source.Height;
-            int width = source.Width;
-            int threshold = 500;
+            var pixelValue = 128;
+            var height = source.Height;
+            var width = source.Width;
+            var threshold = 500;
 
             // Iterate lines
-            for (int y = 0; y < height; y++)
+            for (var y = 0; y < height; y++)
             {
-                sourceIndex = y * sourceData.Stride;
-                destinationIndex = y * destinationData.Stride;
+                sourceIndex = y*sourceData.Stride;
+                destinationIndex = y*destinationData.Stride;
                 destinationValue = 0;
                 pixelValue = 128;
 
                 // Iterate pixels
-                for (int x = 0; x < width; x++)
+                for (var x = 0; x < width; x++)
                 {
                     // Compute pixel brightness (i.e. total of Red, Green, and Blue values) - Thanks murx
                     //                           B                             G                              R
-                    pixelTotal = sourceBuffer[sourceIndex] + sourceBuffer[sourceIndex + 1] + sourceBuffer[sourceIndex + 2];
+                    pixelTotal = sourceBuffer[sourceIndex] + sourceBuffer[sourceIndex + 1] +
+                                 sourceBuffer[sourceIndex + 2];
                     if (pixelTotal > threshold)
                     {
-                        destinationValue += (byte)pixelValue;
+                        destinationValue += (byte) pixelValue;
                     }
                     if (pixelValue == 1)
                     {
