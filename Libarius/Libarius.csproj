@@ -67,6 +67,19 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="System\LimitInstance.cs" />
     <Compile Include="System\SystemHelper.cs" />
+    <Compile Include="Timer\ScheduleTimer\EventStorage.cs" />
+    <Compile Include="Timer\ScheduleTimer\IScheduledItem.cs" />
+    <Compile Include="Timer\ScheduleTimer\MethodCall.cs" />
+    <Compile Include="Timer\ScheduleTimer\ReportTimer.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduledItems\BlockWrapper.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduledItems\EventInstance.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduledItems\EventQueue.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduledItems\ScheduledTime.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduledItems\SimpleInterval.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduledItems\SingleEvent.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduleFilter.cs" />
+    <Compile Include="Timer\ScheduleTimer\ScheduleTimer.cs" />
+    <Compile Include="Timer\ScheduleTimer\TimerJob.cs" />
     <Compile Include="WPF\BindingHelper.cs" />
     <Compile Include="WPF\WindowSettings.cs" />
   </ItemGroup>
