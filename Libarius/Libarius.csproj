@@ -57,6 +57,7 @@
     <Compile Include="CLI\Options.cs" />
     <Compile Include="Compression\QuickLZ\QuickLZ.cs" />
     <Compile Include="Active Directory\AdHelper.cs" />
+    <Compile Include="Core\ExceptionExtensions.cs" />
     <Compile Include="Cryptography\AesHelper.cs" />
     <Compile Include="Cryptography\StringCipher.cs" />
     <Compile Include="Filesystem\FilesystemHelper.cs" />
