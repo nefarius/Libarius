@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Libarius.Core
 {
+    /// <summary>
+    ///     <see href="http://stackoverflow.com/questions/9314172/getting-all-messages-from-innerexceptions"/>
+    /// </summary>
     public static class ExceptionExtensions
     {
         // all error checking left out for brevity
